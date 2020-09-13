@@ -137,7 +137,7 @@ namespace datassembler
 
 
 
-        bool Compare_With_Values = false;
+        int Compare_Mode = 1;
 
 
         private void Button_Get_Difference_Click(object sender, EventArgs e)
@@ -153,14 +153,13 @@ namespace datassembler
             Open_File_Dialog_1.CheckPathExists = true;
 
 
+            Button_Get_Difference.ForeColor = Color.Red;
+            Button_Get_Difference.Text = "Please Wait";
+
             try
             {   if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
-                {
-                    Button_Get_Difference.ForeColor = Color.Red;
-                    Button_Get_Difference.Text = "Please Wait";
-                   
-                    var The_Program = new Program();
-                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, (Text_Box_Dat_File.Text + "_Difference.txt"), Text_Box_Delimiter.Text[0], Compare_With_Values);                              
+                {   var The_Program = new Program();
+                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, Text_Box_Dat_File.Text, Text_Box_Delimiter.Text[0], Compare_Mode);                              
                 }
             } catch {}
 
@@ -169,20 +168,42 @@ namespace datassembler
             Button_Get_Difference.Text = "Compare Keys Of";
         }
 
-        private void Button_Compare_Values_Click(object sender, EventArgs e)
-        {
-            Button_Compare_Values.ForeColor = Color.Red;
-            Button_Compare_Values.Text = "Takes Long..";
 
-            Compare_With_Values = true;
+        private void Button_Merge_Into_File_Click(object sender, EventArgs e)
+        {        
+            Button_Merge_Into_File.ForeColor = Color.Red;
+            Button_Merge_Into_File.Text = "because this";
+
+            Button_Compare_Values.ForeColor = Color.Red;
+            Button_Compare_Values.Text = "takes long..";
+
+            Compare_Mode = 3;
             Button_Get_Difference_Click(null, null);
 
-            Compare_With_Values = false; // Resetting    
-      
+            Compare_Mode = 1; // Resetting    
+
+            Button_Merge_Into_File.ForeColor = Color.Black;
+            Button_Merge_Into_File.Text = "Merge Sync Into";
 
             Button_Compare_Values.ForeColor = Color.Black;
             Button_Compare_Values.Text = "Compare Values Of";
         }
+
+
+        private void Button_Compare_Values_Click(object sender, EventArgs e)
+        {
+            Button_Compare_Values.ForeColor = Color.Red;
+            Button_Compare_Values.Text = "takes long..";
+
+            Compare_Mode = 2;
+            // Runns the full code of the other button
+            Button_Get_Difference_Click(null, null); 
+            Compare_Mode = 1; // Resetting    
+      
+            Button_Compare_Values.ForeColor = Color.Black;
+            Button_Compare_Values.Text = "Compare Values Of";
+        }
+
 
 
 
