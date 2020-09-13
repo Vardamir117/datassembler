@@ -37,6 +37,8 @@
             this.Open_File_Dialog_1 = new System.Windows.Forms.OpenFileDialog();
             this.Text_Box_Delimiter = new System.Windows.Forms.TextBox();
             this.Label_Delimiter = new System.Windows.Forms.Label();
+            this.Button_Get_Difference = new System.Windows.Forms.Button();
+            this.Button_Compare_Difference = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Text_Box_Dat_File
@@ -131,13 +133,38 @@
             this.Label_Delimiter.TabIndex = 10;
             this.Label_Delimiter.Text = "Delimiter";
             // 
+            // Button_Get_Difference
+            // 
+            this.Button_Get_Difference.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.Button_Get_Difference.Font = new System.Drawing.Font("Georgia", 13F);
+            this.Button_Get_Difference.Location = new System.Drawing.Point(23, 148);
+            this.Button_Get_Difference.Name = "Button_Get_Difference";
+            this.Button_Get_Difference.Size = new System.Drawing.Size(160, 34);
+            this.Button_Get_Difference.TabIndex = 11;
+            this.Button_Get_Difference.Text = "Get Difference";
+            this.Button_Get_Difference.UseVisualStyleBackColor = false;
+            this.Button_Get_Difference.Click += new System.EventHandler(this.Button_Get_Difference_Click);
+            // 
+            // Button_Compare_Difference
+            // 
+            this.Button_Compare_Difference.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.Button_Compare_Difference.Font = new System.Drawing.Font("Georgia", 11F);
+            this.Button_Compare_Difference.Location = new System.Drawing.Point(421, 148);
+            this.Button_Compare_Difference.Name = "Button_Compare_Difference";
+            this.Button_Compare_Difference.Size = new System.Drawing.Size(160, 34);
+            this.Button_Compare_Difference.TabIndex = 12;
+            this.Button_Compare_Difference.Text = "Compare Difference";
+            this.Button_Compare_Difference.UseVisualStyleBackColor = false;
+            // 
             // Main_Window
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(600, 158);
+            this.ClientSize = new System.Drawing.Size(600, 198);
+            this.Controls.Add(this.Button_Compare_Difference);
+            this.Controls.Add(this.Button_Get_Difference);
             this.Controls.Add(this.Label_Delimiter);
             this.Controls.Add(this.Text_Box_Delimiter);
             this.Controls.Add(this.Check_Box_Open_File);
@@ -166,6 +193,8 @@
         public System.Windows.Forms.OpenFileDialog Open_File_Dialog_1;
         private System.Windows.Forms.TextBox Text_Box_Delimiter;
         public System.Windows.Forms.Label Label_Delimiter;
+        public System.Windows.Forms.Button Button_Get_Difference;
+        public System.Windows.Forms.Button Button_Compare_Difference;
 
     }
 }

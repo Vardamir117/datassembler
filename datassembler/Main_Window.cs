@@ -135,8 +135,29 @@ namespace datassembler
             }
         }
 
-      
+        private void Button_Get_Difference_Click(object sender, EventArgs e)
+        {   // Setting Innitial Filename and Data for the Open Menu
+            Open_File_Dialog_1.FileName = "";
+            Open_File_Dialog_1.InitialDirectory = Directory.GetCurrentDirectory();
+            Open_File_Dialog_1.Filter = "dat files (*.dat)|*.dat|csv files (*.csv)|*.csv|txt files (*.txt)|*.txt";
+
+            Open_File_Dialog_1.FilterIndex = 1;
+            Open_File_Dialog_1.RestoreDirectory = true;
+            Open_File_Dialog_1.CheckFileExists = true;
+            Open_File_Dialog_1.CheckPathExists = true;
+
+            try
+            {   if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
+                {   var The_Program = new Program();
+                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, (Text_Box_Dat_File.Text + "_Difference.txt"), Text_Box_Delimiter.Text[0]);                              
+                }
+            } catch {}         
+        }
 
 
+
+
+
+    // =================================== End of File ===================================
     }
 }

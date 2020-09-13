@@ -614,10 +614,57 @@ namespace datassembler
 
 
 
+        // ============================= Adding Difference Selection =============================
+        public static string Add_Line = Environment.NewLine;
+
+
+        // Disassambly(Text_Box_Dat_File.Text, "Small_File", Text_Box_Dat_File.Text + "_Difference.txt", Text_Box_Delimiter.Text[0]);
+
+        public void Disassambly(string Large_File, string Small_File, string Result_File, char Delimiter)
+        {   string Current = "";
+            string The_Text = "";
+            List<string> Strings_Large = new List<string>();
+            List<string> Strings_Small = new List<string>();
+            
+
+            try {
+                foreach (string Line in File.ReadLines(Large_File))
+                { Strings_Large.Add(Line.Split(Delimiter)[0]); }
+            } catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Large_File)); }
+
+
+
+            try
+            {   foreach (string Line in File.ReadLines(Small_File))
+                {
+                    // Split by Delimiter and get Slot 0 in the resulting array
+                    Current = Line.Split(Delimiter)[0];
+                    bool Found_In_List = false;
+
+                    foreach (string Entry in Strings_Large)
+                    { 
+                        if (Entry == Current) { Found_In_List = true; break; }
+                    }
+
+                    // If not matched we know it is a user generated string.
+                    if (Found_In_List == false)
+                    { 
+                        // Strings_Small.Add(Current);
+                        The_Text += Current + Add_Line;
+                    }
+                }
+            }
+            catch { MessageBox.Show("Something crashed the comparsion between the Files."); }
+
+
+            // Saving Differences
+            File.WriteAllText(Result_File, The_Text);
+
+        }
 
 
 
 
-
+        // =================================== End of File ===================================
     }
 }
