@@ -38,7 +38,7 @@
             this.Text_Box_Delimiter = new System.Windows.Forms.TextBox();
             this.Label_Delimiter = new System.Windows.Forms.Label();
             this.Button_Get_Difference = new System.Windows.Forms.Button();
-            this.Button_Compare_Difference = new System.Windows.Forms.Button();
+            this.Button_Compare_Values = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Text_Box_Dat_File
@@ -77,9 +77,9 @@
             // 
             this.Button_Browse.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Browse.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Browse.Location = new System.Drawing.Point(222, 96);
+            this.Button_Browse.Location = new System.Drawing.Point(202, 104);
             this.Button_Browse.Name = "Button_Browse";
-            this.Button_Browse.Size = new System.Drawing.Size(160, 34);
+            this.Button_Browse.Size = new System.Drawing.Size(200, 56);
             this.Button_Browse.TabIndex = 4;
             this.Button_Browse.Text = "Browse";
             this.Button_Browse.UseVisualStyleBackColor = false;
@@ -137,24 +137,25 @@
             // 
             this.Button_Get_Difference.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Get_Difference.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Get_Difference.Location = new System.Drawing.Point(23, 148);
+            this.Button_Get_Difference.Location = new System.Drawing.Point(23, 136);
             this.Button_Get_Difference.Name = "Button_Get_Difference";
             this.Button_Get_Difference.Size = new System.Drawing.Size(160, 34);
             this.Button_Get_Difference.TabIndex = 11;
-            this.Button_Get_Difference.Text = "Get Difference";
+            this.Button_Get_Difference.Text = "Compare Keys Of";
             this.Button_Get_Difference.UseVisualStyleBackColor = false;
             this.Button_Get_Difference.Click += new System.EventHandler(this.Button_Get_Difference_Click);
             // 
-            // Button_Compare_Difference
+            // Button_Compare_Values
             // 
-            this.Button_Compare_Difference.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.Button_Compare_Difference.Font = new System.Drawing.Font("Georgia", 11F);
-            this.Button_Compare_Difference.Location = new System.Drawing.Point(421, 148);
-            this.Button_Compare_Difference.Name = "Button_Compare_Difference";
-            this.Button_Compare_Difference.Size = new System.Drawing.Size(160, 34);
-            this.Button_Compare_Difference.TabIndex = 12;
-            this.Button_Compare_Difference.Text = "Compare Difference";
-            this.Button_Compare_Difference.UseVisualStyleBackColor = false;
+            this.Button_Compare_Values.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.Button_Compare_Values.Font = new System.Drawing.Font("Georgia", 11F);
+            this.Button_Compare_Values.Location = new System.Drawing.Point(421, 136);
+            this.Button_Compare_Values.Name = "Button_Compare_Values";
+            this.Button_Compare_Values.Size = new System.Drawing.Size(160, 34);
+            this.Button_Compare_Values.TabIndex = 12;
+            this.Button_Compare_Values.Text = "Compare Values Of";
+            this.Button_Compare_Values.UseVisualStyleBackColor = false;
+            this.Button_Compare_Values.Click += new System.EventHandler(this.Button_Compare_Values_Click);
             // 
             // Main_Window
             // 
@@ -162,8 +163,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(600, 198);
-            this.Controls.Add(this.Button_Compare_Difference);
+            this.ClientSize = new System.Drawing.Size(600, 180);
+            this.Controls.Add(this.Button_Compare_Values);
             this.Controls.Add(this.Button_Get_Difference);
             this.Controls.Add(this.Label_Delimiter);
             this.Controls.Add(this.Text_Box_Delimiter);
@@ -194,7 +195,7 @@
         private System.Windows.Forms.TextBox Text_Box_Delimiter;
         public System.Windows.Forms.Label Label_Delimiter;
         public System.Windows.Forms.Button Button_Get_Difference;
-        public System.Windows.Forms.Button Button_Compare_Difference;
+        public System.Windows.Forms.Button Button_Compare_Values;
 
     }
 }

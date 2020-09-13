@@ -620,38 +620,52 @@ namespace datassembler
 
         // Disassambly(Text_Box_Dat_File.Text, "Small_File", Text_Box_Dat_File.Text + "_Difference.txt", Text_Box_Delimiter.Text[0]);
 
-        public void Disassambly(string Large_File, string Small_File, string Result_File, char Delimiter)
-        {   string Current = "";
-            string The_Text = "";
-            List<string> Strings_Large = new List<string>();
-            List<string> Strings_Small = new List<string>();
+        public void Disassambly(string Large_File, string Small_File, string Result_File, char Delimiter, bool Compare_Strings)
+        {   string The_Text = "";
+            bool Found_In_Keys = false;
+            bool Found_In_Values = false;            
+            List<string> Key_Cache = new List<string>();
+            List<string> Value_Cache = new List<string>();
             
 
-            try {
-                foreach (string Line in File.ReadLines(Large_File))
-                { Strings_Large.Add(Line.Split(Delimiter)[0]); }
-            } catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Large_File)); }
 
-
-
-            try
+            try // Loading the small file into Cache
             {   foreach (string Line in File.ReadLines(Small_File))
-                {
-                    // Split by Delimiter and get Slot 0 in the resulting array
-                    Current = Line.Split(Delimiter)[0];
-                    bool Found_In_List = false;
+                {   Key_Cache.Add(Line.Split(Delimiter)[0]);
+                    Value_Cache.Add(Line.Split(Delimiter)[1]);
+                }
+            } catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Small_File)); }
 
-                    foreach (string Entry in Strings_Large)
-                    { 
-                        if (Entry == Current) { Found_In_List = true; break; }
+
+
+
+            try // Checking the large file
+            {   foreach (string Line in File.ReadLines(Large_File))
+                {   Found_In_Keys = false;
+
+                    foreach (string Entry in Key_Cache)
+                    {   // Split by Delimiter and get Slot 0 of the resulting array as Current_Key
+                        if (Entry == Line.Split(Delimiter)[0]) { Found_In_Keys = true; break; }
+                    }               
+
+                    // If not matched we know it is a user generated string cause it didn't matched.
+                    if (Found_In_Keys == false) { The_Text += Line + Add_Line; }
+
+
+
+                    // From the Keys that match in both files we test whether the Values are identical
+                    if (Found_In_Keys & Compare_Strings) 
+                    {   Found_In_Values = false;
+                       
+                        foreach (string Entry in Value_Cache)
+                        {
+                            if (Entry == Line.Split(Delimiter)[1]) { Found_In_Values = true; break; }
+                        }
+
+                        if (Found_In_Values == false) { The_Text += Line + Add_Line; } // Appending to the matched values
                     }
 
-                    // If not matched we know it is a user generated string.
-                    if (Found_In_List == false)
-                    { 
-                        // Strings_Small.Add(Current);
-                        The_Text += Current + Add_Line;
-                    }
+
                 }
             }
             catch { MessageBox.Show("Something crashed the comparsion between the Files."); }

@@ -18,7 +18,7 @@ namespace datassembler
     {
         public Main_Window()
         {
-            InitializeComponent();
+            InitializeComponent();         
         }
 
         public void Main_Window_Load(object sender, EventArgs e)
@@ -135,23 +135,53 @@ namespace datassembler
             }
         }
 
+
+
+        bool Compare_With_Values = false;
+
+
         private void Button_Get_Difference_Click(object sender, EventArgs e)
-        {   // Setting Innitial Filename and Data for the Open Menu
+        {               
+            // Setting Innitial Filename and Data for the Open Menu
             Open_File_Dialog_1.FileName = "";
             Open_File_Dialog_1.InitialDirectory = Directory.GetCurrentDirectory();
-            Open_File_Dialog_1.Filter = "dat files (*.dat)|*.dat|csv files (*.csv)|*.csv|txt files (*.txt)|*.txt";
+            Open_File_Dialog_1.Filter = "txt files (*.txt)|*.txt|csv files (*.csv)|*.csv";
 
             Open_File_Dialog_1.FilterIndex = 1;
             Open_File_Dialog_1.RestoreDirectory = true;
             Open_File_Dialog_1.CheckFileExists = true;
             Open_File_Dialog_1.CheckPathExists = true;
 
+
             try
             {   if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
-                {   var The_Program = new Program();
-                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, (Text_Box_Dat_File.Text + "_Difference.txt"), Text_Box_Delimiter.Text[0]);                              
+                {
+                    Button_Get_Difference.ForeColor = Color.Red;
+                    Button_Get_Difference.Text = "Please Wait";
+                   
+                    var The_Program = new Program();
+                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, (Text_Box_Dat_File.Text + "_Difference.txt"), Text_Box_Delimiter.Text[0], Compare_With_Values);                              
                 }
-            } catch {}         
+            } catch {}
+
+            // GradientActiveCaption
+            Button_Get_Difference.ForeColor = Color.Black;
+            Button_Get_Difference.Text = "Compare Keys Of";
+        }
+
+        private void Button_Compare_Values_Click(object sender, EventArgs e)
+        {
+            Button_Compare_Values.ForeColor = Color.Red;
+            Button_Compare_Values.Text = "Takes Long..";
+
+            Compare_With_Values = true;
+            Button_Get_Difference_Click(null, null);
+
+            Compare_With_Values = false; // Resetting    
+      
+
+            Button_Compare_Values.ForeColor = Color.Black;
+            Button_Compare_Values.Text = "Compare Values Of";
         }
 
 
