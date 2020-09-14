@@ -179,7 +179,6 @@ namespace datassembler
 
             Compare_Mode = 3;
             Button_Get_Difference_Click(null, null);
-
             Compare_Mode = 1; // Resetting    
 
             Button_Merge_Into_File.ForeColor = Color.Black;
