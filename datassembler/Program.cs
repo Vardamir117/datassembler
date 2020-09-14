@@ -645,8 +645,14 @@ namespace datassembler
 
             try // Checking the selected file
             {
-                foreach (string Line in File.ReadLines(Selected_File + ".txt"))
-                {
+                IEnumerable<string> Selected_Lines = File.ReadLines(Selected_File + ".txt");
+
+                if (!Selected_Lines.First().Contains(Delimiter) & !Selected_Lines.Last().Contains(Delimiter))
+                { MessageBox.Show("The 2 files have different Delimiter sign. Please reconvert one of their 2 .dat to have the same Delimiter."); return; }
+
+
+                foreach (string Line in Selected_Lines)
+                {                  
                     // 1 = Keys, 2 = Values, 3 = Sync Values into File
                     if (Compare_Mode != 1) // 2 or 3 String comparsion is slower then Key comparsion, because of longer Char arrays
                     {   Found_In_Values = false;
@@ -660,10 +666,12 @@ namespace datassembler
                     }
                     else if (Compare_Mode != 2) // 1 or 3 From the Keys that match in both files we test whether the Values are identical
                     {   Found_In_Keys = false;
-
+                   
                         foreach (string Entry in Key_Cache)
                         {   // Split by Delimiter and get Slot 0 of the resulting array as Current_Key
-                            if (Entry == Line.Split(Delimiter)[0]) { Found_In_Keys = true; break; }
+                            // if (Entry == Line.Split(Delimiter)[0]) // Case Sensitive
+                            if (System.Text.RegularExpressions.Regex.IsMatch(Line.Split(Delimiter)[0], "(?i).*?" + Entry + ".*?"))
+                            { Found_In_Keys = true; break; }
                         }
 
                         // If not matched we know it is a user generated string cause it didn't matched.

@@ -199,7 +199,7 @@ namespace datassembler
                     string The_Path = Path.GetDirectoryName(Open_File_Dialog_1.FileName) + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
 
                     // CAUTION, We're switching file of the Selected_File and Second_File parameters!
-                    The_Program.Disassambly(The_Path, Text_Box_Dat_File.Text, Text_Box_Delimiter.Text[0], Compare_Mode);
+                    The_Program.Disassambly(Text_Box_Dat_File.Text, The_Path, Text_Box_Delimiter.Text[0], Compare_Mode);
                     // MessageBox.Show(The_Path);
                 }
             } catch {}
