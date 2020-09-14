@@ -159,7 +159,9 @@ namespace datassembler
             try
             {   if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
                 {   var The_Program = new Program();
-                    The_Program.Disassambly(Text_Box_Dat_File.Text + ".txt", Open_File_Dialog_1.FileName, Text_Box_Dat_File.Text, Text_Box_Delimiter.Text[0], Compare_Mode);                              
+                    string The_Path = Path.GetDirectoryName(Open_File_Dialog_1.FileName) + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
+                    The_Program.Disassambly(Text_Box_Dat_File.Text, The_Path, Text_Box_Delimiter.Text[0], Compare_Mode);
+                    // MessageBox.Show(The_Path);
                 }
             } catch {}
 
@@ -178,11 +180,34 @@ namespace datassembler
             Button_Compare_Values.Text = "takes long..";
 
             Compare_Mode = 3;
-            Button_Get_Difference_Click(null, null);
+
+
+            // Setting Innitial Filename and Data for the Open Menu
+            Open_File_Dialog_1.FileName = "";
+            Open_File_Dialog_1.InitialDirectory = Directory.GetCurrentDirectory();
+            Open_File_Dialog_1.Filter = "txt files (*.txt)|*.txt|csv files (*.csv)|*.csv";
+
+            Open_File_Dialog_1.FilterIndex = 1;
+            Open_File_Dialog_1.RestoreDirectory = true;
+            Open_File_Dialog_1.CheckFileExists = true;
+            Open_File_Dialog_1.CheckPathExists = true;
+            try
+            {
+                if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
+                {
+                    var The_Program = new Program(); // Removing .txt extension, because Disassambly() expects the path without it.                   
+                    string The_Path = Path.GetDirectoryName(Open_File_Dialog_1.FileName) + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
+
+                    // CAUTION, We're switching file of the Selected_File and Second_File parameters!
+                    The_Program.Disassambly(The_Path, Text_Box_Dat_File.Text, Text_Box_Delimiter.Text[0], Compare_Mode);
+                    // MessageBox.Show(The_Path);
+                }
+            } catch {}
+
             Compare_Mode = 1; // Resetting    
 
             Button_Merge_Into_File.ForeColor = Color.Black;
-            Button_Merge_Into_File.Text = "Merge Sync Into";
+            Button_Merge_Into_File.Text = "Overwrite Sync Into";
 
             Button_Compare_Values.ForeColor = Color.Black;
             Button_Compare_Values.Text = "Compare Values Of";

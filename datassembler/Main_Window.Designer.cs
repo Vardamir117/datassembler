@@ -54,9 +54,9 @@
             // 
             this.Button_Open_Dat_File.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Open_Dat_File.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Open_Dat_File.Location = new System.Drawing.Point(23, 100);
+            this.Button_Open_Dat_File.Location = new System.Drawing.Point(21, 100);
             this.Button_Open_Dat_File.Name = "Button_Open_Dat_File";
-            this.Button_Open_Dat_File.Size = new System.Drawing.Size(160, 34);
+            this.Button_Open_Dat_File.Size = new System.Drawing.Size(176, 34);
             this.Button_Open_Dat_File.TabIndex = 1;
             this.Button_Open_Dat_File.Text = "Dat to Txt -->";
             this.Button_Open_Dat_File.UseVisualStyleBackColor = false;
@@ -66,9 +66,9 @@
             // 
             this.Button_Open_Txt_File.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Open_Txt_File.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Open_Txt_File.Location = new System.Drawing.Point(421, 100);
+            this.Button_Open_Txt_File.Location = new System.Drawing.Point(407, 100);
             this.Button_Open_Txt_File.Name = "Button_Open_Txt_File";
-            this.Button_Open_Txt_File.Size = new System.Drawing.Size(160, 34);
+            this.Button_Open_Txt_File.Size = new System.Drawing.Size(176, 34);
             this.Button_Open_Txt_File.TabIndex = 3;
             this.Button_Open_Txt_File.Text = "<-- Txt to Dat";
             this.Button_Open_Txt_File.UseVisualStyleBackColor = false;
@@ -78,9 +78,9 @@
             // 
             this.Button_Browse.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Browse.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Browse.Location = new System.Drawing.Point(222, 100);
+            this.Button_Browse.Location = new System.Drawing.Point(214, 100);
             this.Button_Browse.Name = "Button_Browse";
-            this.Button_Browse.Size = new System.Drawing.Size(160, 34);
+            this.Button_Browse.Size = new System.Drawing.Size(176, 34);
             this.Button_Browse.TabIndex = 4;
             this.Button_Browse.Text = "Browse";
             this.Button_Browse.UseVisualStyleBackColor = false;
@@ -138,9 +138,9 @@
             // 
             this.Button_Get_Difference.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Get_Difference.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Get_Difference.Location = new System.Drawing.Point(23, 146);
+            this.Button_Get_Difference.Location = new System.Drawing.Point(21, 146);
             this.Button_Get_Difference.Name = "Button_Get_Difference";
-            this.Button_Get_Difference.Size = new System.Drawing.Size(160, 34);
+            this.Button_Get_Difference.Size = new System.Drawing.Size(176, 34);
             this.Button_Get_Difference.TabIndex = 11;
             this.Button_Get_Difference.Text = "Compare Keys Of";
             this.Button_Get_Difference.UseVisualStyleBackColor = false;
@@ -150,9 +150,9 @@
             // 
             this.Button_Compare_Values.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Compare_Values.Font = new System.Drawing.Font("Georgia", 11F);
-            this.Button_Compare_Values.Location = new System.Drawing.Point(421, 146);
+            this.Button_Compare_Values.Location = new System.Drawing.Point(407, 146);
             this.Button_Compare_Values.Name = "Button_Compare_Values";
-            this.Button_Compare_Values.Size = new System.Drawing.Size(160, 34);
+            this.Button_Compare_Values.Size = new System.Drawing.Size(176, 34);
             this.Button_Compare_Values.TabIndex = 12;
             this.Button_Compare_Values.Text = "Compare Values Of";
             this.Button_Compare_Values.UseVisualStyleBackColor = false;
@@ -162,11 +162,11 @@
             // 
             this.Button_Merge_Into_File.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.Button_Merge_Into_File.Font = new System.Drawing.Font("Georgia", 13F);
-            this.Button_Merge_Into_File.Location = new System.Drawing.Point(222, 146);
+            this.Button_Merge_Into_File.Location = new System.Drawing.Point(214, 146);
             this.Button_Merge_Into_File.Name = "Button_Merge_Into_File";
-            this.Button_Merge_Into_File.Size = new System.Drawing.Size(160, 34);
+            this.Button_Merge_Into_File.Size = new System.Drawing.Size(176, 34);
             this.Button_Merge_Into_File.TabIndex = 13;
-            this.Button_Merge_Into_File.Text = "Merge Sync Into";
+            this.Button_Merge_Into_File.Text = "Overwrite Sync Into";
             this.Button_Merge_Into_File.UseVisualStyleBackColor = false;
             this.Button_Merge_Into_File.Click += new System.EventHandler(this.Button_Merge_Into_File_Click);
             // 

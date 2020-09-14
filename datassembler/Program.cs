@@ -619,8 +619,8 @@ namespace datassembler
 
 
         // Disassambly(Text_Box_Dat_File.Text, "Small_File", Text_Box_Dat_File.Text + "_Difference.txt", Text_Box_Delimiter.Text[0]);
-
-        public void Disassambly(string Selected_File, string Second_File, string Result_File, char Delimiter, int Compare_Mode)
+        // Use NO Extensions for the 2 filepaths!
+        public void Disassambly(string Selected_File, string Second_File, char Delimiter, int Compare_Mode)
         {   string The_Text = "";
             bool Found_In_Keys = false;
             bool Found_In_Values = false;            
@@ -631,21 +631,24 @@ namespace datassembler
 
 
             try // Loading the second file into Cache
-            {   foreach (string Line in File.ReadLines(Second_File))
+            {
+                foreach (string Line in File.ReadLines(Second_File + ".txt"))
                 {   Key_Cache.Add(Line.Split(Delimiter)[0]);
                     Value_Cache.Add(Line.Split(Delimiter)[1]);
                     Line_Cache.Add(Line); // Key + Value
                 }
-            } catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Second_File)); }
+            }
+            catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Second_File + ".txt")); }
 
 
 
 
             try // Checking the selected file
-            {   foreach (string Line in File.ReadLines(Selected_File))
+            {
+                foreach (string Line in File.ReadLines(Selected_File + ".txt"))
                 {
-
-                    if (Compare_Mode == 2) // String comparsion is slower then Key comparsion, because of longer Char arrays
+                    // 1 = Keys, 2 = Values, 3 = Sync Values into File
+                    if (Compare_Mode != 1) // 2 or 3 String comparsion is slower then Key comparsion, because of longer Char arrays
                     {   Found_In_Values = false;
                        
                         foreach (string Entry in Value_Cache)
@@ -655,7 +658,7 @@ namespace datassembler
 
                         if (Found_In_Values == false) { The_Text += Line + Add_Line; Result_Cache.Add(Line); } // Appending to the matched values
                     }
-                    else // if (Compare_Mode == 1) // From the Keys that match in both files we test whether the Values are identical
+                    else if (Compare_Mode != 2) // 1 or 3 From the Keys that match in both files we test whether the Values are identical
                     {   Found_In_Keys = false;
 
                         foreach (string Entry in Key_Cache)
@@ -673,50 +676,57 @@ namespace datassembler
 
 
 
+          
 
             // ==================== Synchronizing Entry Table ====================
-            if (Compare_Mode != 3) { File.WriteAllText(Result_File + "_Difference.txt", The_Text); } // Saving Differences  
-            
-            else // if (Compare_Mode == 3)
+            string The_Extension = "_Difference.txt";
+                           
+            if (Compare_Mode == 3)
             {   The_Text = ""; // Resetting
+                The_Extension = "_Synced.txt";
 
                 try // UPDATE EXISTING ENTRIES
-                {   foreach (string Line in Line_Cache) // Of the Second File
-                    {
-                        Found_In_Keys = false;
-                        //string Matched_Value = "";
+                {   foreach (string Line in Line_Cache) // From First File
+                    {   Found_In_Keys = false;
 
-                        foreach (string Result in Result_Cache) // From First File
-                        {   // Split by Delimiter and get Slot 0
+                        foreach (string Result in Result_Cache) // Of the Second File
+                        {  
                             if (Result.Split(Delimiter)[0] == Line.Split(Delimiter)[0]) 
                             {   Found_In_Keys = true;
-                                // Matched_Value = Result; 
+                               
                                 The_Text += Result + Add_Line; // If Key found we Choose the Result
                                 break;
                             }                          
                         }
                         if (Found_In_Keys == false) { The_Text += Line + Add_Line; } // Choose Original Line 
-                    }                   
-                } catch {}
+                    }
+                } catch { MessageBox.Show("Function that updates existing entries has crashed."); }
 
 
 
                 try // APPEND MISSING ENTRIES
                 {   foreach (string Result in Result_Cache)                  
                     {   Found_In_Keys = false;
-                        //string Matched_Value = "";
-
+                        
                         foreach (string Line in Line_Cache) 
                         {   // Split by Delimiter and get Slot 0
                             if (Result.Split(Delimiter)[0] == Line.Split(Delimiter)[0]) { Found_In_Keys = true; break; }
                         }
                         if (Found_In_Keys == false) { The_Text += Result + Add_Line; }
-                    }                
-                } catch {}
+                    }
+                } catch { MessageBox.Show("Function that appends missing entries has crashed."); }
+            }
 
 
-                File.WriteAllText(Result_File + "_Synced.txt", The_Text); 
-            }                              
+            if (The_Text == "") // Using the Results we collected
+            {   string Query_Type = "Values";
+                if (Compare_Mode == 2) { Query_Type = "Keys"; }
+                MessageBox.Show("No " + Query_Type + " found.");
+            }
+            else { File.WriteAllText(Selected_File + The_Extension, The_Text); } 
+
+
+
         }
 
 
