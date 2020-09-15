@@ -632,6 +632,8 @@ namespace datassembler
         }
 
 
+       
+
         // Disassambly(Text_Box_Dat_File.Text, "Small_File", Text_Box_Dat_File.Text + "_Difference.txt", Text_Box_Delimiter.Text[0]);
         // Use NO Extensions for the 2 filepaths!
         public string Disassambly(string Selected_File, string Second_File, string The_Extension, char Delimiter, int Compare_Mode)
@@ -643,6 +645,7 @@ namespace datassembler
             List<string> Line_Cache = new List<string>();
             List<string> Result_Cache = new List<string>();
 
+          
 
             // Inform(Selected_File + ", " + Second_File);
             if (Selected_File == Second_File) 

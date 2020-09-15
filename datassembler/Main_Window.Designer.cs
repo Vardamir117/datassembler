@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main_Window));
             this.Text_Box_Dat_File = new System.Windows.Forms.TextBox();
             this.Button_Open_Dat_File = new System.Windows.Forms.Button();
             this.Button_Open_Txt_File = new System.Windows.Forms.Button();
@@ -41,6 +42,8 @@
             this.Button_Compare_Values = new System.Windows.Forms.Button();
             this.Button_Merge_Into_File = new System.Windows.Forms.Button();
             this.Text_Box_Console = new System.Windows.Forms.RichTextBox();
+            this.Button_Backup = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.Button_Backup)).BeginInit();
             this.SuspendLayout();
             // 
             // Text_Box_Dat_File
@@ -190,9 +193,22 @@
             this.Text_Box_Console.ForeColor = System.Drawing.SystemColors.MenuBar;
             this.Text_Box_Console.Location = new System.Drawing.Point(-2, -2);
             this.Text_Box_Console.Name = "Text_Box_Console";
+            this.Text_Box_Console.ReadOnly = true;
             this.Text_Box_Console.Size = new System.Drawing.Size(604, 198);
             this.Text_Box_Console.TabIndex = 14;
             this.Text_Box_Console.Text = "    ";
+            // 
+            // Button_Backup
+            // 
+            this.Button_Backup.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.Button_Backup.Location = new System.Drawing.Point(134, 16);
+            this.Button_Backup.Name = "Button_Backup";
+            this.Button_Backup.Size = new System.Drawing.Size(32, 32);
+            this.Button_Backup.TabIndex = 15;
+            this.Button_Backup.TabStop = false;
+            this.Button_Backup.Click += new System.EventHandler(this.Button_Backup_Click);
+            this.Button_Backup.MouseLeave += new System.EventHandler(this.Button_Backup_MouseLeave);
+            this.Button_Backup.MouseHover += new System.EventHandler(this.Button_Backup_MouseHover);
             // 
             // Main_Window
             // 
@@ -201,6 +217,7 @@
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(600, 195);
+            this.Controls.Add(this.Button_Backup);
             this.Controls.Add(this.Button_Merge_Into_File);
             this.Controls.Add(this.Button_Compare_Values);
             this.Controls.Add(this.Button_Get_Difference);
@@ -214,9 +231,11 @@
             this.Controls.Add(this.Text_Box_Dat_File);
             this.Controls.Add(this.Text_Box_Console);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main_Window";
             this.Text = "Jorritkarwehr\'s Dat Assambler          (powered by Imperialware UI)";
             this.Load += new System.EventHandler(this.Main_Window_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.Button_Backup)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,6 +256,7 @@
         public System.Windows.Forms.Button Button_Compare_Values;
         public System.Windows.Forms.Button Button_Merge_Into_File;
         public System.Windows.Forms.RichTextBox Text_Box_Console;
+        private System.Windows.Forms.PictureBox Button_Backup;
 
     }
 }
