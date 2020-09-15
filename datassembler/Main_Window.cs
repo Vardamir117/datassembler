@@ -18,8 +18,11 @@ namespace datassembler
     {
         public Main_Window()
         {
-            InitializeComponent();         
+            InitializeComponent();       
         }
+
+        public bool Console_Mode = false;
+
 
         public void Main_Window_Load(object sender, EventArgs e)
         {
@@ -36,26 +39,52 @@ namespace datassembler
         }
 
 
+        public void Show_File(string The_Path, bool Append_Suffix) // Without Extension please
+        {   if (Check_Box_Open_File.Checked)
+            {   // Thread.Sleep(1000); 
+                string Extension = ".txt";
+                try
+                {   if (!Append_Suffix) { Extension = ""; } 
+                    else if (Text_Box_Delimiter.Text[0] == ';') { Extension = ".csv"; }
+                    
+                    System.Diagnostics.Process.Start(The_Path + Extension);
+                }
+                catch
+                {   // if (The_Path == "") { MessageBox.Show("Please add filepath of the .dat or .csv/.txt into the model textbox."); }
+                    // else { MessageBox.Show("Error; " + The_Path + Extension + Environment.NewLine + " was not found."); }           
+                }
+            }
+        }
+
+        public void Toggle_Control_Vision(bool Is_Visible)
+        {
+            List<Control> Controls = new List<Control>
+            {   Label_File_Path, Label_Delimiter, Check_Box_Open_File, Text_Box_Delimiter, Text_Box_Dat_File,
+                Button_Open_Dat_File, Button_Browse, Button_Open_Txt_File, Button_Get_Difference, Button_Compare_Values
+            };
+
+            foreach (Control Item in Controls) { Item.Visible = Is_Visible; }
+            Text_Box_Console.Text = Environment.NewLine + "    "; // Clearing for Usage
+
+
+            if (Is_Visible) { Console_Mode = false; Button_Merge_Into_File.Text = "Overwrite Sync Into"; }
+            else { Console_Mode = true; Button_Merge_Into_File.Text = "   Ok"; }
+        }
+
 
         private void Button_Open_Dat_File_Click(object sender, EventArgs e)
         {  string[] Arguments = new string[] { "/e" };
            //if (Check_Box_Open_File.Checked) { Arguments = new string[] { "/e /a" }; }
            Program.Run(Text_Box_Dat_File.Text, Arguments, Text_Box_Delimiter.Text[0]);
 
-           if (Check_Box_Open_File.Checked)
-           {   // Thread.Sleep(1000);            
-               try
-               {   string Extension = ".txt";
-                   if (Text_Box_Delimiter.Text[0] == ';') { Extension = ".csv"; }
-                   System.Diagnostics.Process.Start(Text_Box_Dat_File.Text + Extension);
-               }
-               catch
-               {   if (Text_Box_Dat_File.Text == "") { MessageBox.Show("Please add filepath of the .dat or .csv/.txt into the model textbox."); }
-                   { MessageBox.Show("Error; No File wasfound."); }
-                   // { MessageBox.Show("Error; Maybe you need to assign .txt files to any Editor? I recommend PsPad."); }
-               }
-           }
+           Show_File(Text_Box_Dat_File.Text, true);
         }
+
+        private void Button_Open_Dat_File_MouseHover(object sender, EventArgs e)
+        { Button_Open_Dat_File.ForeColor = Color.White; }
+
+        private void Button_Open_Dat_File_MouseLeave(object sender, EventArgs e)
+        { Button_Open_Dat_File.ForeColor = Color.Black; }
 
 
         private void Button_Browse_Click(object sender, EventArgs e)    
@@ -86,28 +115,29 @@ namespace datassembler
             //{ MessageBox.Show(The_Exception.Message, "MainWindow", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
+        private void Button_Browse_MouseHover(object sender, EventArgs e)
+        { Button_Browse.ForeColor = Color.White; }
+
+        private void Button_Browse_MouseLeave(object sender, EventArgs e)
+        { Button_Browse.ForeColor = Color.Black; }
+
+
+
 
         private void Button_Open_Txt_File_Click(object sender, EventArgs e)
         {
             string[] Arguments = new string[] { "/b" };
             //if (Check_Box_Open_File.Checked)  { Arguments = new string[] { "/b /a" }; }
             Program.Run(Text_Box_Dat_File.Text, Arguments, Text_Box_Delimiter.Text[0]);
-
-            if (Check_Box_Open_File.Checked)
-            {   // Thread.Sleep(1000);            
-                try 
-                {   string Extension = ".txt";
-                    if (Text_Box_Delimiter.Text[0] == ';') { Extension = ".csv"; }
-                    System.Diagnostics.Process.Start(Text_Box_Dat_File.Text + Extension); 
-                }
-                catch
-                {
-                    if (Text_Box_Dat_File.Text == "") { MessageBox.Show("Please add filepath of the .dat or .csv/.txt into the model textbox."); }
-                    else { MessageBox.Show("Error; No File wasfound."); }
-                    // { MessageBox.Show("Error; Maybe you need to assign .dat files to the dat Editor in this Windows account."); }
-                }
-            }         
+            Show_File(Text_Box_Dat_File.Text, true);     
         }
+
+        private void Button_Open_Txt_File_MouseHover(object sender, EventArgs e)
+        { Button_Open_Txt_File.ForeColor = Color.White; }
+
+        private void Button_Open_Txt_File_MouseLeave(object sender, EventArgs e)
+        { Button_Open_Txt_File.ForeColor = Color.Black; }
+
 
 
         private void Check_Box_Open_File_CheckedChanged(object sender, EventArgs e)
@@ -137,15 +167,19 @@ namespace datassembler
 
 
 
+
         int Compare_Mode = 1;
 
 
         private void Button_Get_Difference_Click(object sender, EventArgs e)
-        {               
+        {   string Result_File = "";
+
             // Setting Innitial Filename and Data for the Open Menu
             Open_File_Dialog_1.FileName = "";
             Open_File_Dialog_1.InitialDirectory = Directory.GetCurrentDirectory();
-            Open_File_Dialog_1.Filter = "txt files (*.txt)|*.txt|csv files (*.csv)|*.csv";
+
+            if (Text_Box_Delimiter.Text[0] == ';') { Open_File_Dialog_1.Filter = "csv files (*.csv)|*.csv| txt files (*.txt)|*.txt"; }
+            else { Open_File_Dialog_1.Filter = "txt files (*.txt)|*.txt|csv files (*.csv)|*.csv"; }
 
             Open_File_Dialog_1.FilterIndex = 1;
             Open_File_Dialog_1.RestoreDirectory = true;
@@ -157,10 +191,14 @@ namespace datassembler
             Button_Get_Difference.Text = "Please Wait";
 
             try
-            {   if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
-                {   var The_Program = new Program();
+            {
+                if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
+                {
+                    var The_Program = new Program();
                     string The_Path = Path.GetDirectoryName(Open_File_Dialog_1.FileName) + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
-                    The_Program.Disassambly(Text_Box_Dat_File.Text, The_Path, Text_Box_Delimiter.Text[0], Compare_Mode);
+                    string The_Extension = Path.GetExtension(Open_File_Dialog_1.FileName);
+
+                    Result_File = The_Program.Disassambly(Text_Box_Dat_File.Text, The_Path, The_Extension, Text_Box_Delimiter.Text[0], Compare_Mode);
                     // MessageBox.Show(The_Path);
                 }
             } catch {}
@@ -168,42 +206,32 @@ namespace datassembler
             // GradientActiveCaption
             Button_Get_Difference.ForeColor = Color.Black;
             Button_Get_Difference.Text = "Compare Keys Of";
+
+            Show_File(Result_File, false);
         }
+
+        private void Button_Get_Difference_MouseHover(object sender, EventArgs e)
+        { Button_Get_Difference.ForeColor = Color.White; }
+
+        private void Button_Get_Difference_MouseLeave(object sender, EventArgs e)
+        { Button_Get_Difference.ForeColor = Color.Black; }
+
+
+
 
 
         private void Button_Merge_Into_File_Click(object sender, EventArgs e)
-        {        
+        {
+            if (Console_Mode) { Toggle_Control_Vision(true); return; } // This button acts as "OK" button in Console mode
+
             Button_Merge_Into_File.ForeColor = Color.Red;
             Button_Merge_Into_File.Text = "because this";
 
             Button_Compare_Values.ForeColor = Color.Red;
             Button_Compare_Values.Text = "takes long..";
 
-            Compare_Mode = 3;
-
-
-            // Setting Innitial Filename and Data for the Open Menu
-            Open_File_Dialog_1.FileName = "";
-            Open_File_Dialog_1.InitialDirectory = Directory.GetCurrentDirectory();
-            Open_File_Dialog_1.Filter = "txt files (*.txt)|*.txt|csv files (*.csv)|*.csv";
-
-            Open_File_Dialog_1.FilterIndex = 1;
-            Open_File_Dialog_1.RestoreDirectory = true;
-            Open_File_Dialog_1.CheckFileExists = true;
-            Open_File_Dialog_1.CheckPathExists = true;
-            try
-            {
-                if (Open_File_Dialog_1.ShowDialog() == DialogResult.OK)
-                {
-                    var The_Program = new Program(); // Removing .txt extension, because Disassambly() expects the path without it.                   
-                    string The_Path = Path.GetDirectoryName(Open_File_Dialog_1.FileName) + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
-
-                    // CAUTION, We're switching file of the Selected_File and Second_File parameters!
-                    The_Program.Disassambly(Text_Box_Dat_File.Text, The_Path, Text_Box_Delimiter.Text[0], Compare_Mode);
-                    // MessageBox.Show(The_Path);
-                }
-            } catch {}
-
+            Compare_Mode = 3;   
+            Button_Get_Difference_Click(null, null);
             Compare_Mode = 1; // Resetting    
 
             Button_Merge_Into_File.ForeColor = Color.Black;
@@ -212,6 +240,15 @@ namespace datassembler
             Button_Compare_Values.ForeColor = Color.Black;
             Button_Compare_Values.Text = "Compare Values Of";
         }
+
+        private void Button_Merge_Into_File_MouseHover(object sender, EventArgs e)
+        { Button_Merge_Into_File.ForeColor = Color.White; }
+
+        private void Button_Merge_Into_File_MouseLeave(object sender, EventArgs e)
+        { Button_Merge_Into_File.ForeColor = Color.Black; }
+
+
+
 
 
         private void Button_Compare_Values_Click(object sender, EventArgs e)
@@ -228,6 +265,17 @@ namespace datassembler
             Button_Compare_Values.Text = "Compare Values Of";
         }
 
+        private void Button_Compare_Values_MouseHover(object sender, EventArgs e)
+        { Button_Compare_Values.ForeColor = Color.White; }
+
+        private void Button_Compare_Values_MouseLeave(object sender, EventArgs e)
+        { Button_Compare_Values.ForeColor = Color.Black; }
+
+
+
+
+
+ 
 
 
 

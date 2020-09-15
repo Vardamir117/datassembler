@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 
 
+
 namespace datassembler
 {
     public static class crcGlobals {
@@ -618,9 +619,22 @@ namespace datassembler
         public static string Add_Line = Environment.NewLine;
 
 
+        public void Inform(string Content)
+        {   Form The_Window = Application.OpenForms["Main_Window"];
+            Main_Window Active_Window = (Main_Window)The_Window; // This is a Hack!
+
+            Active_Window.Toggle_Control_Vision(false);
+            Active_Window.Text_Box_Console.Text += Content;
+        
+            // Get the Text Box alternative
+            //RichTextBox Box = (RichTextBox)The_Window.Controls.Find("Text_Box_Console", true)[0];
+            //Box.Text = "Test This";              
+        }
+
+
         // Disassambly(Text_Box_Dat_File.Text, "Small_File", Text_Box_Dat_File.Text + "_Difference.txt", Text_Box_Delimiter.Text[0]);
         // Use NO Extensions for the 2 filepaths!
-        public void Disassambly(string Selected_File, string Second_File, char Delimiter, int Compare_Mode)
+        public string Disassambly(string Selected_File, string Second_File, string The_Extension, char Delimiter, int Compare_Mode)
         {   string The_Text = "";
             bool Found_In_Keys = false;
             bool Found_In_Values = false;            
@@ -630,25 +644,28 @@ namespace datassembler
             List<string> Result_Cache = new List<string>();
 
 
+            // Inform(Selected_File + ", " + Second_File);
+            if (Selected_File == Second_File) 
+            { Inform("You are trying to compare " + Add_Line + "    " + Selected_File + Add_Line + "    To itself."); return ""; }
+
+
             try // Loading the second file into Cache
             {
-                foreach (string Line in File.ReadLines(Second_File + ".txt"))
+                foreach (string Line in File.ReadLines(Second_File + The_Extension))
                 {   Key_Cache.Add(Line.Split(Delimiter)[0]);
                     Value_Cache.Add(Line.Split(Delimiter)[1]);
                     Line_Cache.Add(Line); // Key + Value
                 }
             }
-            catch { MessageBox.Show("Crashed listing of all String Names in " + Path.GetFileName(Second_File + ".txt")); }
+            catch { Inform("Crashed listing of all String Names in " + Path.GetFileName(Second_File + The_Extension)); return ""; }
 
-
-
+      
 
             try // Checking the selected file
-            {
-                IEnumerable<string> Selected_Lines = File.ReadLines(Selected_File + ".txt");
+            {   IEnumerable<string> Selected_Lines = File.ReadLines(Selected_File + The_Extension);
 
                 if (!Selected_Lines.First().Contains(Delimiter) & !Selected_Lines.Last().Contains(Delimiter))
-                { MessageBox.Show("The 2 files have different Delimiter sign. Please reconvert one of their 2 .dat to have the same Delimiter."); return; }
+                { Inform("Delimiter Error. Please reconvert one of their 2 .dat to have the same Delimiter - or change the sign in the UI."); return ""; }
 
 
                 foreach (string Line in Selected_Lines)
@@ -670,7 +687,7 @@ namespace datassembler
                         foreach (string Entry in Key_Cache)
                         {   // Split by Delimiter and get Slot 0 of the resulting array as Current_Key
                             // if (Entry == Line.Split(Delimiter)[0]) // Case Sensitive
-                            if (System.Text.RegularExpressions.Regex.IsMatch(Line.Split(Delimiter)[0], "(?i).*?" + Entry + ".*?"))
+                            if (System.Text.RegularExpressions.Regex.IsMatch(Line.Split(Delimiter)[0], "(?i).*?" + Entry)) // + ".*?"))
                             { Found_In_Keys = true; break; }
                         }
 
@@ -680,18 +697,18 @@ namespace datassembler
 
 
                 }
-            } catch { MessageBox.Show("Something crashed the comparsion between the Files."); }
+            } catch { Inform("Something crashed the comparsion between the Files."); return ""; }
 
 
 
           
 
             // ==================== Synchronizing Entry Table ====================
-            string The_Extension = "_Difference.txt";
+            string Result_Extension = "_Difference" + The_Extension;
                            
             if (Compare_Mode == 3)
             {   The_Text = ""; // Resetting
-                The_Extension = "_Synced.txt";
+                Result_Extension = "_Synced" + The_Extension;
 
                 try // UPDATE EXISTING ENTRIES
                 {   foreach (string Line in Line_Cache) // From First File
@@ -708,7 +725,7 @@ namespace datassembler
                         }
                         if (Found_In_Keys == false) { The_Text += Line + Add_Line; } // Choose Original Line 
                     }
-                } catch { MessageBox.Show("Function that updates existing entries has crashed."); }
+                } catch { Inform("Function that updates existing entries has crashed."); return ""; }
 
 
 
@@ -722,19 +739,22 @@ namespace datassembler
                         }
                         if (Found_In_Keys == false) { The_Text += Result + Add_Line; }
                     }
-                } catch { MessageBox.Show("Function that appends missing entries has crashed."); }
+                } catch { Inform("Function that appends missing entries has crashed."); return ""; }
             }
 
 
             if (The_Text == "") // Using the Results we collected
             {   string Query_Type = "Values";
                 if (Compare_Mode == 2) { Query_Type = "Keys"; }
-                MessageBox.Show("No " + Query_Type + " found.");
+                Inform("No " + Query_Type + " found."); // MessageBox.Show();
             }
-            else { File.WriteAllText(Selected_File + The_Extension, The_Text); } 
+            else 
+            { 
+                File.WriteAllText(Selected_File + Result_Extension, The_Text);
+                return Selected_File + Result_Extension;
+            }
 
-
-
+            return ""; 
         }
 
 

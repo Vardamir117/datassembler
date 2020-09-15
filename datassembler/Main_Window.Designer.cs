@@ -40,6 +40,7 @@
             this.Button_Get_Difference = new System.Windows.Forms.Button();
             this.Button_Compare_Values = new System.Windows.Forms.Button();
             this.Button_Merge_Into_File = new System.Windows.Forms.Button();
+            this.Text_Box_Console = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // Text_Box_Dat_File
@@ -61,6 +62,8 @@
             this.Button_Open_Dat_File.Text = "Dat to Txt -->";
             this.Button_Open_Dat_File.UseVisualStyleBackColor = false;
             this.Button_Open_Dat_File.Click += new System.EventHandler(this.Button_Open_Dat_File_Click);
+            this.Button_Open_Dat_File.MouseLeave += new System.EventHandler(this.Button_Open_Dat_File_MouseLeave);
+            this.Button_Open_Dat_File.MouseHover += new System.EventHandler(this.Button_Open_Dat_File_MouseHover);
             // 
             // Button_Open_Txt_File
             // 
@@ -73,6 +76,8 @@
             this.Button_Open_Txt_File.Text = "<-- Txt to Dat";
             this.Button_Open_Txt_File.UseVisualStyleBackColor = false;
             this.Button_Open_Txt_File.Click += new System.EventHandler(this.Button_Open_Txt_File_Click);
+            this.Button_Open_Txt_File.MouseLeave += new System.EventHandler(this.Button_Open_Txt_File_MouseLeave);
+            this.Button_Open_Txt_File.MouseHover += new System.EventHandler(this.Button_Open_Txt_File_MouseHover);
             // 
             // Button_Browse
             // 
@@ -85,6 +90,8 @@
             this.Button_Browse.Text = "Browse";
             this.Button_Browse.UseVisualStyleBackColor = false;
             this.Button_Browse.Click += new System.EventHandler(this.Button_Browse_Click);
+            this.Button_Browse.MouseLeave += new System.EventHandler(this.Button_Browse_MouseLeave);
+            this.Button_Browse.MouseHover += new System.EventHandler(this.Button_Browse_MouseHover);
             // 
             // Label_File_Path
             // 
@@ -145,6 +152,8 @@
             this.Button_Get_Difference.Text = "Compare Keys Of";
             this.Button_Get_Difference.UseVisualStyleBackColor = false;
             this.Button_Get_Difference.Click += new System.EventHandler(this.Button_Get_Difference_Click);
+            this.Button_Get_Difference.MouseLeave += new System.EventHandler(this.Button_Get_Difference_MouseLeave);
+            this.Button_Get_Difference.MouseHover += new System.EventHandler(this.Button_Get_Difference_MouseHover);
             // 
             // Button_Compare_Values
             // 
@@ -157,6 +166,8 @@
             this.Button_Compare_Values.Text = "Compare Values Of";
             this.Button_Compare_Values.UseVisualStyleBackColor = false;
             this.Button_Compare_Values.Click += new System.EventHandler(this.Button_Compare_Values_Click);
+            this.Button_Compare_Values.MouseLeave += new System.EventHandler(this.Button_Compare_Values_MouseLeave);
+            this.Button_Compare_Values.MouseHover += new System.EventHandler(this.Button_Compare_Values_MouseHover);
             // 
             // Button_Merge_Into_File
             // 
@@ -169,6 +180,19 @@
             this.Button_Merge_Into_File.Text = "Overwrite Sync Into";
             this.Button_Merge_Into_File.UseVisualStyleBackColor = false;
             this.Button_Merge_Into_File.Click += new System.EventHandler(this.Button_Merge_Into_File_Click);
+            this.Button_Merge_Into_File.MouseLeave += new System.EventHandler(this.Button_Merge_Into_File_MouseLeave);
+            this.Button_Merge_Into_File.MouseHover += new System.EventHandler(this.Button_Merge_Into_File_MouseHover);
+            // 
+            // Text_Box_Console
+            // 
+            this.Text_Box_Console.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.Text_Box_Console.Font = new System.Drawing.Font("Georgia", 20F);
+            this.Text_Box_Console.ForeColor = System.Drawing.SystemColors.MenuBar;
+            this.Text_Box_Console.Location = new System.Drawing.Point(-2, -2);
+            this.Text_Box_Console.Name = "Text_Box_Console";
+            this.Text_Box_Console.Size = new System.Drawing.Size(604, 198);
+            this.Text_Box_Console.TabIndex = 14;
+            this.Text_Box_Console.Text = "    ";
             // 
             // Main_Window
             // 
@@ -188,6 +212,7 @@
             this.Controls.Add(this.Button_Open_Txt_File);
             this.Controls.Add(this.Button_Open_Dat_File);
             this.Controls.Add(this.Text_Box_Dat_File);
+            this.Controls.Add(this.Text_Box_Console);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "Main_Window";
             this.Text = "Jorritkarwehr\'s Dat Assambler          (powered by Imperialware UI)";
@@ -211,6 +236,7 @@
         public System.Windows.Forms.Button Button_Get_Difference;
         public System.Windows.Forms.Button Button_Compare_Values;
         public System.Windows.Forms.Button Button_Merge_Into_File;
+        public System.Windows.Forms.RichTextBox Text_Box_Console;
 
     }
 }
