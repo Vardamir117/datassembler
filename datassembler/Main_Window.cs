@@ -23,11 +23,12 @@ namespace datassembler
 
             Button_Backup.BackColor = Color.Transparent;  
             Set_Resource_Image(Button_Backup, global::datassembler.Properties.Resources.Button_Backup);
-
         
         }
 
         public bool Console_Mode = false;
+        string Debug_Mode = "false";
+
         // Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         string Program_Directory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Dat_Assambler";
 
@@ -63,6 +64,25 @@ namespace datassembler
 
 
         //=====================//
+        // If exists in source path copy and OVERWRITE that to target
+        public void Overwrite_Copy(string Source_Path_and_File, string New_Path_and_File)
+        {   if (Debug_Mode == "false")
+            {
+                try
+                {
+                    if (File.Exists(Source_Path_and_File))
+                    { File.Copy(Source_Path_and_File, New_Path_and_File, true); }
+                }
+                catch { }
+            }
+            else if (Debug_Mode == "true")
+            {
+                if (File.Exists(Source_Path_and_File))
+                { File.Copy(Source_Path_and_File, New_Path_and_File, true); }
+            }
+        }
+
+        //=====================//
         public void Deleting(string Data)
         {
             int Error_Count = 0;
@@ -89,9 +109,7 @@ namespace datassembler
         //=====================//
 
         public void Renaming(string Path_and_File, string New_File_Name)
-        {   string Debug_Mode = "false";
-
-            if (Debug_Mode == "true")
+        {   if (Debug_Mode == "true")
             {
                 FileAttributes The_Attribute = File.GetAttributes(Path_and_File);
 
@@ -147,7 +165,7 @@ namespace datassembler
         public void Toggle_Control_Vision(bool Is_Visible)
         {
             List<Control> Controls = new List<Control>
-            {   Label_File_Path, Label_Delimiter, Check_Box_Open_File, Text_Box_Delimiter, Text_Box_Dat_File,
+            {   Label_File_Path, Label_Delimiter, Check_Box_Open_File, Text_Box_Delimiter, Text_Box_Dat_File, Button_Backup, 
                 Button_Open_Dat_File, Button_Browse, Button_Open_Txt_File, Button_Get_Difference, Button_Compare_Values
             };
 
@@ -168,6 +186,7 @@ namespace datassembler
            //if (Check_Box_Open_File.Checked) { Arguments = new string[] { "/e /a" }; }
            Program.Run(Text_Box_Dat_File.Text, Arguments, Text_Box_Delimiter.Text[0]);
 
+           Set_Resource_Image(Button_Backup, global::datassembler.Properties.Resources.Main_Icon);
            Show_File(Text_Box_Dat_File.Text, true);
         }
 
@@ -197,7 +216,7 @@ namespace datassembler
                     + @"\" + Path.GetFileNameWithoutExtension(Open_File_Dialog_1.FileName);
 
                     Text_Box_Dat_File.Text = The_Path;
-
+            
                     datassembler.Properties.Settings.Default.Last_Path = The_Path;
                     datassembler.Properties.Settings.Default.Save();
                 }
@@ -216,41 +235,45 @@ namespace datassembler
 
 
         private void Button_Open_Txt_File_Click(object sender, EventArgs e)
-        {
+        {   string Extension = ".txt";
+            if (Text_Box_Delimiter.Text[0] == ';') { Extension = ".csv"; }
+               
+            
+            if (!File.Exists(Text_Box_Dat_File.Text + Extension))
+            {   if (Extension == ".txt") { Extension = ".csv"; }
+                else { Extension = ".txt"; } // Trying to swap
+
+                if (!File.Exists(Text_Box_Dat_File.Text + Extension)) { MessageBox.Show("Error, couldn't find the selected file."); return; }          
+            }
+
+            // Overwriting the one named in the same minute (won't be any great difference..)
             string[] Arguments = new string[] { "/b" };
             //if (Check_Box_Open_File.Checked)  { Arguments = new string[] { "/b /a" }; }
             Program.Run(Text_Box_Dat_File.Text, Arguments, Text_Box_Delimiter.Text[0]);
 
 
-
-
-
-            string Extension = ".txt";
-            if (Text_Box_Delimiter.Text[0] == ';') { Extension = ".csv"; }
-
+            // =============== Backup Function =============== 
             string Backup_Directory = Program_Directory + @"\Backup\" + Path.GetFileNameWithoutExtension(Text_Box_Dat_File.Text + Extension);
-         
             if (!Directory.Exists(Backup_Directory)) { Directory.CreateDirectory(Backup_Directory); }
-            string[] All_Files = Directory.GetFiles(Backup_Directory);
-            
-            int Temporal_C = 0;
-            // foreach (string File in All_Files)
-            for (int i = All_Files.Count() -1; i >= 0; --i)
-            {   try
-                {   string[] Current = null; Temporal_C = 0;
-                    Current = Path.GetFileName(All_Files[i]).Split('.');
-                    Int32.TryParse(Current[0], out Temporal_C);
 
-
-                    if (All_Files.Count() > 29 & Temporal_C > 29) { Deleting(All_Files[i]); } // getting rid of first and last slots.    
-                    else { Renaming(All_Files[i], (Temporal_C + 1).ToString() + '.' + Current[1]); } // Current[1] is the Extension               
-                }  catch {}
+            try
+            {   var The_Program = new Program();
+                FileInfo Oldest_File = new DirectoryInfo(Backup_Directory).GetFiles().OrderBy(f => f.CreationTime).First();
+                if (Directory.GetFiles(Backup_Directory).Count() > datassembler.Properties.Settings.Default.History_File_Cache) 
+                { Deleting(Oldest_File.FullName.ToString()); }
             }
-     
+            catch 
+            {   if (Directory.GetFiles(Backup_Directory).Count() > 0)
+                { MessageBox.Show("Failed to trash the oldest backup file."); } 
+            }
 
-            try { File.Copy(Text_Box_Dat_File.Text + Extension, Backup_Directory + @"\" + 1 + Extension); } catch {}
+
+            string File_Name = DateTime.Now.ToString("yyyy/MM/dd'___'HH.mm");  // MessageBox.Show(File_Name);
+            Overwrite_Copy(Text_Box_Dat_File.Text + Extension, Backup_Directory + @"\" + File_Name + Extension);
+
+                    
             Button_Backup_MouseHover(null, null); // Just a shiny effect that indicates it was saved
-            // Show_File(Text_Box_Dat_File.Text, true); // This isn't supposed to show here    
+            // Show_File(Text_Box_Dat_File.Text, true); // This isn't supposed to show here       
         }
 
 

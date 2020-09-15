@@ -58,5 +58,17 @@ namespace datassembler.Properties {
                 this["Delimiter_Sign"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int History_File_Cache {
+            get {
+                return ((int)(this["History_File_Cache"]));
+            }
+            set {
+                this["History_File_Cache"] = value;
+            }
+        }
     }
 }
