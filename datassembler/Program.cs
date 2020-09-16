@@ -689,9 +689,11 @@ namespace datassembler
                    
                         foreach (string Entry in Key_Cache)
                         {   // Split by Delimiter and get Slot 0 of the resulting array as Current_Key
-                            // if (Entry == Line.Split(Delimiter)[0]) // Case Sensitive
-                            if (System.Text.RegularExpressions.Regex.IsMatch(Line.Split(Delimiter)[0], "(?i).*?" + Entry)) // + ".*?"))
-                            { Found_In_Keys = true; break; }
+                            
+                            //if (System.Text.RegularExpressions.Regex.IsMatch(Line.Split(Delimiter)[0], "(?i).*?" + Entry)) // + ".*?"))
+                            // Better not use Regex, it takes just way too long...
+                            if (Entry == Line.Split(Delimiter)[0]) { Found_In_Keys = true; break; } // Case Sensitive
+                          
                         }
 
                         // If not matched we know it is a user generated string cause it didn't matched.
