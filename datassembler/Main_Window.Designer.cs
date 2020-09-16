@@ -112,7 +112,7 @@
             this.Check_Box_Open_File.AutoSize = true;
             this.Check_Box_Open_File.Font = new System.Drawing.Font("Georgia", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Check_Box_Open_File.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Check_Box_Open_File.Location = new System.Drawing.Point(402, 28);
+            this.Check_Box_Open_File.Location = new System.Drawing.Point(357, 23);
             this.Check_Box_Open_File.Name = "Check_Box_Open_File";
             this.Check_Box_Open_File.Size = new System.Drawing.Size(186, 22);
             this.Check_Box_Open_File.TabIndex = 8;
@@ -127,7 +127,7 @@
             // Text_Box_Delimiter
             // 
             this.Text_Box_Delimiter.Font = new System.Drawing.Font("Georgia", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Text_Box_Delimiter.Location = new System.Drawing.Point(288, 26);
+            this.Text_Box_Delimiter.Location = new System.Drawing.Point(243, 22);
             this.Text_Box_Delimiter.Name = "Text_Box_Delimiter";
             this.Text_Box_Delimiter.Size = new System.Drawing.Size(19, 20);
             this.Text_Box_Delimiter.TabIndex = 9;
@@ -138,7 +138,7 @@
             this.Label_Delimiter.AutoSize = true;
             this.Label_Delimiter.Font = new System.Drawing.Font("Georgia", 12F);
             this.Label_Delimiter.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Label_Delimiter.Location = new System.Drawing.Point(308, 29);
+            this.Label_Delimiter.Location = new System.Drawing.Point(263, 25);
             this.Label_Delimiter.Name = "Label_Delimiter";
             this.Label_Delimiter.Size = new System.Drawing.Size(74, 18);
             this.Label_Delimiter.TabIndex = 10;
@@ -201,7 +201,7 @@
             // Button_Backup
             // 
             this.Button_Backup.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.Button_Backup.Location = new System.Drawing.Point(134, 16);
+            this.Button_Backup.Location = new System.Drawing.Point(553, 16);
             this.Button_Backup.Name = "Button_Backup";
             this.Button_Backup.Size = new System.Drawing.Size(32, 32);
             this.Button_Backup.TabIndex = 15;
