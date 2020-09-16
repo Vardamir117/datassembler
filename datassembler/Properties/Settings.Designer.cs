@@ -61,7 +61,7 @@ namespace datassembler.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
         public int History_File_Cache {
             get {
                 return ((int)(this["History_File_Cache"]));
