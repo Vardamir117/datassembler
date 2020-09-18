@@ -652,15 +652,26 @@ namespace datassembler
             { Inform("You are trying to compare " + Add_Line + "    " + Selected_File + Add_Line + "    To itself."); return ""; }
 
 
+            int Failed_Tags = 0;
+            string Current_Line = "";
             try // Loading the second file into Cache
             {
+                
                 foreach (string Line in File.ReadLines(Second_File + The_Extension))
-                {   Key_Cache.Add(Line.Split(Delimiter)[0]);
-                    Value_Cache.Add(Line.Split(Delimiter)[1]);
-                    Line_Cache.Add(Line); // Key + Value
+                {   //try {   
+                        Current_Line = Line;
+                        // if (Line.Contains("#NAME?")){ continue; }
+                        Key_Cache.Add(Line.Split(Delimiter)[0]);
+                        Value_Cache.Add(Line.Split(Delimiter)[1]);
+                        Line_Cache.Add(Line); // Key + Value
+                    //} catch { Failed_Tags++; }
                 }
             }
-            catch { Inform("Crashed listing of all String Names in " + Path.GetFileName(Second_File + The_Extension)); return ""; }
+            catch
+            {   Current_Line = Add_Line + "    The last line was:  " + Current_Line + Add_Line; 
+                if (Failed_Tags > 0) { Current_Line +=  "Failed in " + Failed_Tags + " entries." + Add_Line; }              
+                Inform("Crashed listing of " + Path.GetFileName(Second_File + The_Extension) + Current_Line); return "";
+            }
 
       
 

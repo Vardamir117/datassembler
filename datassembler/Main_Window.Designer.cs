@@ -233,7 +233,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main_Window";
-            this.Text = "Jorritkarwehr\'s Dat Assambler          (powered by Imperialware UI)";
+            this.Text = "Jorritkarwehr\'s Dat Assambler   1.3          (powered by Imperialware UI)";
             this.Load += new System.EventHandler(this.Main_Window_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Button_Backup)).EndInit();
             this.ResumeLayout(false);
