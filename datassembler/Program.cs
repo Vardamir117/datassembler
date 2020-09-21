@@ -428,11 +428,19 @@ namespace datassembler
         [STAThread] // Prevents an exception in Open_File_Dialog_1
 
         // renamed original Main to Run because this is supposed to fire once only.
-        static public void Main() 
-        {   Main_Window The_Window = new Main_Window();
-            Application.Run(The_Window); 
+        static public void Main(string[] args) 
+        {
+            if (args.Length == 0) // Start in UI Mode
+            {   Main_Window The_Window = new Main_Window();
+                Application.Run(The_Window);           
+            }
+            else
+            {   // Mode is position 1, Filepath is position 2, Delimiter is position 3
+                try { Run(null, args, '0'); } catch {}              
+            }
            
         }
+
 
 
         static public void Run(string File_Path, string[] args, char delimiter)
@@ -441,18 +449,58 @@ namespace datassembler
                 args = new string[1];
                 args[0] = "/b";
             }
-          
-            char outdelimiter = delimiter;
-            bool nooutset = true;
 
+
+            bool nooutset = true;
+            char outdelimiter = delimiter;
+            if (delimiter == '0')
+            {   delimiter = datassembler.Properties.Settings.Default.Delimiter_Sign;
+                outdelimiter = delimiter;
+            }
+          
             
             // Main_Window The_Window = new Main_Window();
-            string currentDirectory = Directory.GetCurrentDirectory();
+            string Current_Directory = Directory.GetCurrentDirectory();
+            string sourceFile = ""; string outFile = "";
 
-            string sourceFile = File_Path + ".txt"; // "MasterTextFile_ENGLISH.txt";    
-            if (delimiter == ';')  { sourceFile = File_Path + ".csv"; }
 
-            string outFile = File_Path + ".dat"; // "MasterTextFile_ENGLISH.dat";
+
+            if (File_Path != null) { outFile = File_Path + ".dat"; }
+
+
+            if (File_Path != null)
+            {   if (delimiter == ';') { sourceFile = File_Path + ".csv"; }
+                else { sourceFile = File_Path + ".txt"; }
+            }
+                
+            else if (File_Path == null) // Argument Mode, we grab the first File Path it finds
+            {
+                foreach (string The_Path in Directory.GetFiles(Current_Directory))
+                {
+                    if (sourceFile == "" & args[0] == "/b") // If not already assigned, auto assigning
+                    {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt")) 
+                        {   sourceFile = The_Path;                           
+                            outFile = The_Path.Remove(The_Path.Length - 4) + ".dat";
+                            // MessageBox.Show("Assigned " + outFile);      
+                            break;
+                        }
+                    }
+
+                    if (outFile == "" & The_Path.EndsWith(".dat") & args[0] == "/e")
+                    {
+                        outFile = The_Path; 
+                        string The_Extension = ".txt"; if (delimiter == ';') { The_Extension = ".csv"; }
+                        sourceFile = The_Path.Remove(The_Path.Length - 4) + The_Extension;
+                        // MessageBox.Show("Assigned " + sourceFile);
+                        break;
+                    }
+                    // else if (sourceFile != "") { break; } // Because both slots are assigned
+                } 
+            }
+            
+
+
+  
 
             if (args.Length > 1) {
                 if (File.Exists(args[1])) {
