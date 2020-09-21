@@ -435,8 +435,24 @@ namespace datassembler
                 Application.Run(The_Window);           
             }
             else
-            {   // Mode is position 1, Filepath is position 2, Delimiter is position 3
-                try { Run(null, args, '0'); } catch {}              
+            {   string The_File = ""; // Automatic grabbing of first valid file               
+                
+                foreach (string The_Path in Directory.GetFiles(Directory.GetCurrentDirectory()))
+                {   if (The_File == "" & args[0] == "/b") // If not already assigned, auto assigning
+                    {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt"))
+                        {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + outFile);      
+                            break;
+                        }
+                    }
+
+                    if (The_File == "" & The_Path.EndsWith(".dat") & args[0] == "/e")
+                    {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + sourceFile);
+                        break;
+                    }                 
+                }
+
+                // In console, the mode is position 1, Filepath is position 2, Delimiter is position 3
+                try { Run(The_File, args, '0'); } catch { MessageBox.Show("Error in parameter execution."); }              
             }
            
         }
@@ -449,55 +465,25 @@ namespace datassembler
                 args = new string[1];
                 args[0] = "/b";
             }
+             
+            
+            // string Current_Directory = Directory.GetCurrentDirectory();        
+            string outFile = File_Path + ".dat";
+
+            string sourceFile = File_Path + ".txt";
+            if (delimiter == ';') { sourceFile = File_Path + ".csv"; }
 
 
             bool nooutset = true;
             char outdelimiter = delimiter;
-            if (delimiter == '0')
+
+            if (delimiter == '0') // In console mode we grab it from settings
             {   delimiter = datassembler.Properties.Settings.Default.Delimiter_Sign;
                 outdelimiter = delimiter;
             }
-          
+
             
-            // Main_Window The_Window = new Main_Window();
-            string Current_Directory = Directory.GetCurrentDirectory();
-            string sourceFile = ""; string outFile = "";
 
-
-
-            if (File_Path != null) { outFile = File_Path + ".dat"; }
-
-
-            if (File_Path != null)
-            {   if (delimiter == ';') { sourceFile = File_Path + ".csv"; }
-                else { sourceFile = File_Path + ".txt"; }
-            }
-                
-            else if (File_Path == null) // Argument Mode, we grab the first File Path it finds
-            {
-                foreach (string The_Path in Directory.GetFiles(Current_Directory))
-                {
-                    if (sourceFile == "" & args[0] == "/b") // If not already assigned, auto assigning
-                    {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt")) 
-                        {   sourceFile = The_Path;                           
-                            outFile = The_Path.Remove(The_Path.Length - 4) + ".dat";
-                            // MessageBox.Show("Assigned " + outFile);      
-                            break;
-                        }
-                    }
-
-                    if (outFile == "" & The_Path.EndsWith(".dat") & args[0] == "/e")
-                    {
-                        outFile = The_Path; 
-                        string The_Extension = ".txt"; if (delimiter == ';') { The_Extension = ".csv"; }
-                        sourceFile = The_Path.Remove(The_Path.Length - 4) + The_Extension;
-                        // MessageBox.Show("Assigned " + sourceFile);
-                        break;
-                    }
-                    // else if (sourceFile != "") { break; } // Because both slots are assigned
-                } 
-            }
-            
 
 
   
