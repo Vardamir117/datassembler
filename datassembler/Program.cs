@@ -434,23 +434,37 @@ namespace datassembler
             {   Main_Window The_Window = new Main_Window();
                 Application.Run(The_Window);           
             }
+
+
             else
             {   string The_File = ""; // Automatic grabbing of first valid file               
                 
-                foreach (string The_Path in Directory.GetFiles(Directory.GetCurrentDirectory()))
-                {   if (The_File == "" & args[0] == "/b") // If not already assigned, auto assigning
-                    {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt"))
-                        {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + outFile);      
+                if (args.Length > 1)
+                {   if (File.Exists(The_File))
+                    {   // Works even with .dat instead of .txt and vice versa!
+                        if (The_File.EndsWith(".dat") | The_File.EndsWith(".csv") | The_File.EndsWith(".txt"))
+                        { The_File = args[1].Remove(args[1].Length - 4); }
+                        else { The_File = args[1]; } // Seems to have no extension specified
+                    }
+                }
+
+                if (The_File == "")
+                {   foreach (string The_Path in Directory.GetFiles(Directory.GetCurrentDirectory()))
+                    {   if (The_File == "" & args[0] == "/b") // If not already assigned, auto assigning
+                        {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt"))
+                            {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + The_File);      
+                                break;
+                            }
+                        }
+
+                        if (The_File == "" & The_Path.EndsWith(".dat") & args[0] == "/e")
+                        {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + The_File);
                             break;
                         }
                     }
-
-                    if (The_File == "" & The_Path.EndsWith(".dat") & args[0] == "/e")
-                    {   The_File = The_Path.Remove(The_Path.Length - 4); // MessageBox.Show("Assigned " + sourceFile);
-                        break;
-                    }                 
                 }
 
+                // MessageBox.Show(args[0] + ", " + The_File); 
                 // In console, the mode is position 1, Filepath is position 2, Delimiter is position 3
                 try { Run(The_File, args, '0'); } catch { MessageBox.Show("Error in parameter execution."); }              
             }
@@ -460,19 +474,12 @@ namespace datassembler
 
 
         static public void Run(string File_Path, string[] args, char delimiter)
-        {
-            if (args.Length == 0) {
-                args = new string[1];
-                args[0] = "/b";
-            }
-             
-            
-            // string Current_Directory = Directory.GetCurrentDirectory();        
+        {   // string Current_Directory = Directory.GetCurrentDirectory();       
+ 
             string outFile = File_Path + ".dat";
-
             string sourceFile = File_Path + ".txt";
             if (delimiter == ';') { sourceFile = File_Path + ".csv"; }
-
+            // MessageBox.Show(outFile + Add_Line + "and   " + sourceFile);
 
             bool nooutset = true;
             char outdelimiter = delimiter;
@@ -480,22 +487,20 @@ namespace datassembler
             if (delimiter == '0') // In console mode we grab it from settings
             {   delimiter = datassembler.Properties.Settings.Default.Delimiter_Sign;
                 outdelimiter = delimiter;
-            }
-
-            
+            } // MessageBox.Show(delimiter.ToString());
 
 
 
   
-
-            if (args.Length > 1) {
-                if (File.Exists(args[1])) {
-                    sourceFile = args[1];
-                    if (args.Length > 2 && !(args[2].Substring(0, 1).Contains("-"))) {
-                        outFile = args[2];
-                    }
-                }
-            }
+            // Messes with the code above
+            //if (args.Length > 1) {
+            //    if (File.Exists(args[1])) {
+            //        sourceFile = args[1];
+            //        if (args.Length > 2 && !(args[2].Substring(0, 1).Contains("-"))) {
+            //            outFile = args[2];
+            //        }
+            //    }
+            //}
 
             for (Int64 i = 0; i < args.Length; i++)
             {
