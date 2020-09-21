@@ -440,15 +440,17 @@ namespace datassembler
             {   string The_File = ""; // Automatic grabbing of first valid file               
                 
                 if (args.Length > 1)
-                {   if (File.Exists(The_File))
+                {   The_File = args[1];
+
+                    if (File.Exists(The_File))
                     {   // Works even with .dat instead of .txt and vice versa!
                         if (The_File.EndsWith(".dat") | The_File.EndsWith(".csv") | The_File.EndsWith(".txt"))
-                        { The_File = args[1].Remove(args[1].Length - 4); }
+                        { The_File = args[1].Remove(args[1].Length - 4); } // Removing Extension
                         else { The_File = args[1]; } // Seems to have no extension specified
                     }
                 }
 
-                if (The_File == "")
+                else if (The_File == "")
                 {   foreach (string The_Path in Directory.GetFiles(Directory.GetCurrentDirectory()))
                     {   if (The_File == "" & args[0] == "/b") // If not already assigned, auto assigning
                         {   if (The_Path.EndsWith(".csv") | The_Path.EndsWith(".txt"))
