@@ -253,7 +253,7 @@ namespace datassembler
                         int result;
                         do {
                             id++;
-                            if(id > start_entries)
+                            if(id >= start_entries)
                             {
                                 result = 1;
                             }
@@ -261,7 +261,7 @@ namespace datassembler
                             {
                                 result = string.Compare(Level_Entries[i].identifier, Entries[id].identifier, StringComparison.OrdinalIgnoreCase);
                             }
-                        } while (result < 0);
+                        } while (result <= 0);
                         if (result == 0)
                         {
                             Entries[i].entry = Level_Entries[i].entry;
@@ -472,8 +472,8 @@ namespace datassembler
                 case "/h":
                 case "\\h":
                     Console.WriteLine();
-                    Console.WriteLine("Petroglyph dat file assembler 1.0");
-                    Console.WriteLine("  by Jorritkarwehr   September 2019");
+                    Console.WriteLine("Petroglyph dat file assembler 1.A");
+                    Console.WriteLine("  by Jorritkarwehr   September 2021");
                     Console.WriteLine("  build dat: </b txtfile datfile -s:; -a:txt2 -a:txt3... -r:txt4>");
                     Console.WriteLine("  export txt: /e <datfile txtfile -s:; -v -c>");
                     Console.WriteLine("  alphabetize/clean: /a <txtfile -v -n -t -s:; -o:,>");
@@ -488,7 +488,7 @@ namespace datassembler
                     sources[0] = new string[1];
                     sources[0][0] = sourceFile;
                     int csvid = 0;
-                    int csvid2 = 0;
+                    int csvid2 = 1;
 
                     for (Int64 i = 1; i < args.Length; i++)
                     {
