@@ -259,7 +259,7 @@ namespace datassembler
                         int result;
                         do {
                             id++;
-                            if(id > start_entries)
+                            if(id >= start_entries)
                             {
                                 result = 1;
                             }
@@ -267,7 +267,7 @@ namespace datassembler
                             {
                                 result = string.Compare(Level_Entries[i].identifier, Entries[id].identifier, StringComparison.OrdinalIgnoreCase);
                             }
-                        } while (result < 0);
+                        } while (result <= 0);
                         if (result == 0)
                         {
                             Entries[i].entry = Level_Entries[i].entry;
