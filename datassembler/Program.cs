@@ -473,7 +473,7 @@ namespace datassembler
                 case "/h":
                 case "\\h":
                     Console.WriteLine();
-                    Console.WriteLine("Petroglyph dat file assembler 1.B");
+                    Console.WriteLine("Petroglyph dat file assembler 1.C");
                     Console.WriteLine("  by Jorritkarwehr   July 2022");
                     Console.WriteLine("  build dat: </b txtfile datfile -s:; -a:txt2 -a:txt3... -r:txt4>");
                     Console.WriteLine("  export txt: /e <datfile txtfile -s:; -v -c>");
@@ -531,7 +531,7 @@ namespace datassembler
                         }
                     }
 
-                    decompileDat(outFile, sourceFile, delimiter, sorttype);
+                    decompileDat(sourceFile, outFile, delimiter, sorttype);
                     break;
                 case "/a":
                 case "\\a":
