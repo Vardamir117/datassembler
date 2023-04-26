@@ -134,12 +134,15 @@ namespace datassembler
             return System.Text.Encoding.GetEncoding("windows-1252").GetString(entrybytes);
         }
 
-        static void decompileDat(string source, string dest, char delimiter, int sorttype)
+        static List<Text_Entry> ReadDat(string source, char delimiter, int sorttype)
         {
-            if (!File.Exists(source)) {
-                Console.WriteLine("File " + source + " not found" );
-                return;
+            List<Text_Entry> entries = new List<Text_Entry>();
+            if (!File.Exists(source))
+            {
+                Console.WriteLine("File " + source + " not found");
+                return entries;
             }
+
             byte[] datfile = System.IO.File.ReadAllBytes(source);
 
             int total_entries = make32(datfile, 0);
@@ -147,10 +150,12 @@ namespace datassembler
 
             int[] textlength = new int[total_entries];
             int[] idlength = new int[total_entries];
-            Key_Pair[] entries = new Key_Pair[total_entries];
 
             for (int i = 0; i < total_entries; i++)
             {
+                Text_Entry nuevo = new Text_Entry();
+                nuevo.crc = (uint)make32(datfile, index);
+                entries.Add(nuevo);
                 index += 4;
                 textlength[i] = make32(datfile, index);
                 index += 4;
@@ -159,7 +164,6 @@ namespace datassembler
             }
             for (int i = 0; i < total_entries; i++)
             {
-                entries[i] = new Key_Pair();
                 entries[i].entry = readentry(datfile, index, textlength[i]);
                 index += 2 * textlength[i];
             }
@@ -167,21 +171,6 @@ namespace datassembler
             {
                 entries[i].identifier = readid(datfile, index, idlength[i]);
                 index += idlength[i];
-            }
-
-            if(sorttype == 1)
-            {
-                for (int i = 0; i < total_entries; i++)
-                {
-                    string temp = entries[i].identifier;
-                    entries[i].identifier = entries[i].entry;
-                    entries[i].entry = temp;
-                }
-            }
-
-            if (sorttype != 2)
-            {
-                Array.Sort(entries);
             }
 
             if (sorttype == 1)
@@ -194,21 +183,52 @@ namespace datassembler
                 }
             }
 
-            using (
-                var sw = new StreamWriter(
-                    new FileStream(dest, FileMode.Create, FileAccess.ReadWrite),
-                    Encoding.UTF8
-                )
-            )
+            if (sorttype != 2)
             {
-                for (int i = 0; i < total_entries; i++) sw.WriteLine(entries[i].identifier + delimiter + entries[i].entry);
+                entries.Sort();
+            }
+
+            if (sorttype == 1)
+            {
+                for (int i = 0; i < total_entries; i++)
+                {
+                    string temp = entries[i].identifier;
+                    entries[i].identifier = entries[i].entry;
+                    entries[i].entry = temp;
+                }
+            }
+
+            return entries;
+        }
+
+        static void writeTxt(List<Text_Entry> entries, char delimiter, string dest)
+        {
+            using (
+                    var sw = new StreamWriter(
+                        new FileStream(dest, FileMode.Create, FileAccess.ReadWrite),
+                        Encoding.UTF8
+                    )
+                )
+            {
+                for (int i = 0; i < entries.Count; i++) sw.WriteLine(entries[i].identifier + delimiter + entries[i].entry);
             }
         }
 
-        static void compileDat(string[][] sources, string outFile, char delimiter) {
+        static void decompileDat(string source, string dest, char delimiter, int sorttype)
+        {
+            List<Text_Entry> entries = ReadDat(source, delimiter, sorttype);
+            if (entries.Count == 0) {
+                return;
+            }
+
+            writeTxt(entries, delimiter, dest);
+        }
+
+        static List<Text_Entry> ReadText(string[][] sources, char delimiter)
+        {
             uint total_entries = 0;
-            File.Delete(outFile);
             crcGlobals.initTable();
+
             List<Text_Entry> Entries = new List<Text_Entry>();
 
             for (int level = 0; level < sources.Length; level++)
@@ -235,7 +255,8 @@ namespace datassembler
                                     Entries.Add(item);
                                     total_entries++;
                                 }
-                                else {
+                                else
+                                {
                                     Level_Entries.Add(item);
                                     level_entries++;
                                 }
@@ -252,9 +273,10 @@ namespace datassembler
                     {
                         id = -1;
                         int result = -1;
-                        do {
+                        do
+                        {
                             id++;
-                            if(id >= start_entries)
+                            if (id >= start_entries)
                             {
                                 break;
                             }
@@ -275,10 +297,20 @@ namespace datassembler
                     }
                 }
             }
-           
+
 
             Entries.Sort();
 
+            return Entries;
+        }
+
+
+
+        static void compileDat(string[][] sources, string outFile, char delimiter) {
+            List<Text_Entry> Entries = ReadText(sources, delimiter);
+            uint total_entries = (uint)Entries.Count;
+
+            File.Delete(outFile);
             List<byte> datfile = new List<byte>();
 
 
@@ -419,6 +451,202 @@ namespace datassembler
 
         }
 
+        //Despite the double arrays to reuse broader code, this is intended for use on single text files, especially for the target
+        static void syncTexts(string[][] source, string[][] target, char sdelimiter, char tdelimiter)
+        {
+            List<Text_Entry> sources = ReadText(source, sdelimiter);
+            List<Text_Entry> targets = ReadText(target, tdelimiter);
+            List<Text_Entry> output = new List<Text_Entry>();
+
+            sources.Sort();
+            targets.Sort();
+
+            int tIndex = 0;
+
+            //loop through source. For each entry, loop through targets starting at tIndex.
+            for (int sIndex = 0; sIndex < sources.Count; sIndex++)
+            {
+                Boolean dontgotit = true;
+                for (int i = tIndex; i < targets.Count; i++)
+                {
+                    if (sources[sIndex].identifier == targets[i].identifier)
+                    {
+                        output.Add(targets[i]);
+                        tIndex = i + 1;
+                        dontgotit = false;
+                    }
+                }
+                if (dontgotit)
+                {
+                    Text_Entry nuevo = new Text_Entry
+                    {
+                        crc = sources[sIndex].crc,
+                        identifier = sources[sIndex].identifier,
+                        entry = "TRANSLATE:"+sources[sIndex].entry
+                    };
+                    output.Add(nuevo);
+                }
+            }
+
+            writeTxt(output, tdelimiter, target[0][0]);
+        }
+
+        static List<Text_Entry> compareEntries(List<Text_Entry> sources, List<Text_Entry> targets, Boolean Track_Deletions)
+        {
+            List<Text_Entry> output = new List<Text_Entry>();
+            sources.Sort();
+            targets.Sort();
+            int tIndex = 0;
+
+            for (int sIndex = 0; sIndex < sources.Count; sIndex++)
+            {
+                Boolean dontgotit = true;
+                for (int i = tIndex; i < targets.Count; i++)
+                {
+                    if (sources[sIndex].identifier == targets[i].identifier)
+                    {
+                        if (sources[sIndex].entry != targets[i].entry)
+                        {
+                            output.Add(sources[sIndex]);
+                            tIndex = i + 1;
+                        }
+                        dontgotit = false;
+                    }
+                }
+                if (dontgotit)
+                {
+                    output.Add(sources[sIndex]);
+                }
+            }
+
+            if (Track_Deletions)
+            {
+                int s = 0;
+                for (int t = 0; t < targets.Count; t++)
+                {
+                    Boolean dontgotit = true;
+                    for (int i = s; i < sources.Count; i++)
+                    {
+                        if (targets[t].identifier == sources[i].identifier)
+                        {
+                            s = i + 1;
+                            dontgotit = false;
+                        }
+                    }
+                    if (dontgotit)
+                    {
+                        Text_Entry nuevo = new Text_Entry
+                        {
+                            crc = targets[t].crc,
+                            identifier = targets[t].identifier,
+                            entry = ""
+                        };
+                        output.Add(nuevo);
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        static void compareDats(string source, string target, char delimiter)
+        {
+            List<Text_Entry> sources = ReadDat(source, delimiter, 0);
+            List<Text_Entry> targets = ReadDat(target, delimiter, 0);
+
+            List<Text_Entry> output = compareEntries(sources, targets, true);
+
+            writeTxt(output, delimiter, "compare-output.txt");
+        }
+
+        static void compareTranslate(string[][] sources, string target, char delimiter)
+        {
+            List<Text_Entry> entries = ReadText(sources, delimiter);
+            List<Text_Entry> targets = ReadDat(target, delimiter, 0);
+
+            List<Text_Entry> output = compareEntries(entries, targets, false);
+
+            List<Text_Entry>[][] filevalues = new List<Text_Entry>[sources.Length][];
+            List<Text_Entry>[][] filedeltas = new List<Text_Entry>[sources.Length][];
+
+            for (int i = 0; i<sources.Length; i++)
+            {
+                filevalues[i] = new List<Text_Entry>[sources[i].Length];
+                filedeltas[i] = new List<Text_Entry>[sources[i].Length];
+                for (int j = 0; j < sources[i].Length; j++)
+                {
+                    string[][] sArray = new string[1][];
+                    sArray[0] = new string[1];
+                    sArray[0][0] = sources[i][j];
+                    filevalues[i][j] = ReadText(sArray, delimiter);
+                    filedeltas[i][j] = new List<Text_Entry>();
+                }
+            }
+
+            foreach (Text_Entry entry in output)
+            {
+                for (int i = sources.Length-1; i >= 0; i--)
+                {
+                    for (int j = sources[i].Length - 1; j >= 0; j--)
+                    {
+                        foreach (Text_Entry entry2 in filevalues[i][j])
+                        {
+                            if (entry.identifier == entry2.identifier)
+                            {
+                                filedeltas[i][j].Add(entry);
+                                i = 0; //break after finding
+                                j = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < sources.Length; i++)
+            {
+                for (int j = 0; j < sources[i].Length; j++)
+                {
+                    if (filedeltas[i][j].Count > 0)
+                    {
+                        string filename = sources[i][j];
+                        if (filename.Contains("."))
+                        {
+                            filename = filename.Substring(0, filename.LastIndexOf("."));
+                        }
+                        filename += "-to-translate.txt";
+
+                        if (File.Exists(filename))
+                        {
+                            string[][] wrapper = new string[1][];
+                            wrapper[0] = new string[1];
+                            wrapper[0][0] = filename;
+                            List<Text_Entry> olddeltas = ReadText(wrapper, delimiter);
+
+                            foreach (Text_Entry outer in olddeltas)
+                            {
+                                Boolean nothere = true;
+                                foreach (Text_Entry inner in filedeltas[i][j])
+                                {
+                                    if (outer.identifier == inner.identifier)
+                                    {
+                                        nothere = false;
+                                        break;
+                                    }
+                                }
+                                if (nothere)
+                                {
+                                    filedeltas[i][j].Add(outer);
+                                }
+                            }
+                        }
+                        filedeltas[i][j].Sort();
+                        writeTxt(filedeltas[i][j], delimiter, filename);
+                    }
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             if (args.Length == 0) {
@@ -432,12 +660,16 @@ namespace datassembler
             string currentDirectory = Directory.GetCurrentDirectory();
             string sourceFile = "MasterTextFile_ENGLISH.txt";
             string outFile = "MasterTextFile_ENGLISH.dat";
+            Boolean default_source = true;
+            Boolean default_out = true;
 
             if (args.Length > 1) {
                 if (File.Exists(args[1])) {
                     sourceFile = args[1];
+                    default_source = false;
                     if (args.Length > 2 && !(args[2].Substring(0, 1).Contains("-"))) {
                         outFile = args[2];
+                        default_out = false;
                     }
                 }
             }
@@ -469,15 +701,45 @@ namespace datassembler
                 outdelimiter = delimiter;
             }
 
+            string[][] sources = new string[1][];
+            sources[0] = new string[1];
+            sources[0][0] = sourceFile;
+            int csvid = 0;
+            int csvid2 = 1;
+
+            for (Int64 i = 1; i < args.Length; i++)
+            {
+                if (args[i].Substring(0, 1) == "-")
+                {
+                    if (args[i].Substring(1, 1) == "a")
+                    {
+                        Array.Resize(ref sources[csvid], csvid2 + 1);
+                        sources[csvid][csvid2] = args[i].Substring(3, args[i].Length - 3);
+                        csvid2++;
+                    }
+                    if (args[i].Substring(1, 1) == "r")
+                    {
+                        csvid++;
+                        csvid2 = 0;
+                        Array.Resize(ref sources, csvid + 1);
+                        sources[csvid] = new string[1];
+                        sources[csvid][csvid2] = args[i].Substring(3, args[i].Length - 3);
+                    }
+                }
+            }
+
             switch (args[0]) {
                 case "/h":
                 case "\\h":
                     Console.WriteLine();
-                    Console.WriteLine("Petroglyph dat file assembler 1.C");
-                    Console.WriteLine("  by Jorritkarwehr   July 2022");
+                    Console.WriteLine("Petroglyph dat file assembler 2.A");
+                    Console.WriteLine("  by Jorritkarwehr   April 2023");
                     Console.WriteLine("  build dat: </b txtfile datfile -s:; -a:txt2 -a:txt3... -r:txt4>");
                     Console.WriteLine("  export txt: /e <datfile txtfile -s:; -v -c>");
                     Console.WriteLine("  alphabetize/clean: /a <txtfile -v -n -t -s:; -o:,>");
+                    Console.WriteLine("  sync txt: /s <source target -s:; -o:,>");
+                    Console.WriteLine("  compare dat: /c <source target -s:;>");
+                    Console.WriteLine("  translation compare: /t <txtfile datfile -s:; -a:txt2 -a:txt3... -r:txt4>");
                     Console.WriteLine("  extra documentation: /d");
                     Console.WriteLine();
                     Console.WriteLine("-s: separator -a: additional txt -r: replacing txt -v: sort by value -c: sort by CRC -n: no collision file -t: no trailing separator trim -o: output separator");
@@ -485,36 +747,18 @@ namespace datassembler
                     break;
                 case "/b":
                 case "\\b":
-                    string[][] sources = new string[1][];
-                    sources[0] = new string[1];
-                    sources[0][0] = sourceFile;
-                    int csvid = 0;
-                    int csvid2 = 1;
-
-                    for (Int64 i = 1; i < args.Length; i++)
-                    {
-                        if (args[i].Substring(0, 1) == "-")
-                        {
-                            if (args[i].Substring(1, 1) == "a") {
-                                Array.Resize(ref sources[csvid], csvid2+1);
-                                sources[csvid][csvid2] = args[i].Substring(3, args[i].Length - 3);
-                                csvid2++;
-                            }
-                            if (args[i].Substring(1, 1) == "r")
-                            {
-                                csvid++;
-                                csvid2 = 0;
-                                Array.Resize(ref sources, csvid+1);
-                                sources[csvid] = new string[1];
-                                sources[csvid][csvid2] = args[i].Substring(3, args[i].Length - 3);
-                            }
-                        }
-                    }
-
                     compileDat(sources, outFile, delimiter);
                     break;
                 case "/e":
                 case "\\e":
+                    if (default_source)
+                    {
+                        sourceFile = "MasterTextFile_ENGLISH.dat";
+                    }
+                    if (default_out)
+                    {
+                        outFile = "MasterTextFile_ENGLISH.txt";
+                    }
                     int sorttype = 0;
                     for (Int64 i = 1; i < args.Length; i++)
                     {
@@ -557,6 +801,26 @@ namespace datassembler
                     }
                     alphabetize(sourceFile, delimiter, outdelimiter, valuesort, nocoll, notrail);
                     break;
+                case "/s":
+                case "\\s":
+                    string[][] sArray = new string[1][];
+                    sArray[0] = new string[1];
+                    sArray[0][0] = sourceFile;
+
+                    string[][] tArray = new string[1][];
+                    tArray[0] = new string[1];
+                    tArray[0][0] = outFile;
+
+                    syncTexts(sArray, tArray, delimiter, outdelimiter);
+                    break;
+                case "/c":
+                case "\\c":
+                    compareDats(sourceFile, outFile, delimiter);
+                    break;
+                case "/t":
+                case "\\t":
+                    compareTranslate(sources, outFile, delimiter);
+                    break;
                 case "/d":
                 case "\\d":
                     Console.WriteLine("Txt files consist lines of a text id, a separator, and a text entry.");
@@ -585,6 +849,20 @@ namespace datassembler
                     Console.WriteLine("Duplicate values instead of ids will be logged when using -v");
                     Console.WriteLine("If no out separator is specified, it will follow the input separator");
                     Console.WriteLine();
+
+                    Console.WriteLine("Sync (/s) sets the collection of identifiers in the target to match the source");
+                    Console.WriteLine("Extra identifiers in the target will be deleted, missing ones will be added with a TRANSLATE:sourcestring value");
+                    Console.WriteLine("Values for identifiers in both will not be changed.");
+                    Console.WriteLine();
+
+                    Console.WriteLine("Compare dat (/c) runs a comparison on two dat files and writes the changes to compare-output.txt");
+                    Console.WriteLine("Changes and entries only in the source will be written in full.");
+                    Console.WriteLine("Entries only in the target will have have an empty string value.");
+                    Console.WriteLine();
+
+                    Console.WriteLine("Translation compare (/t) runs a comparison on a txt file (or set of files) and dat file");
+                    Console.WriteLine("The changes specific to each text file are written to txtfilename-to-translate.txt");
+                    Console.WriteLine("If the log file already exists, changes will be merged with the old file contents");
                     break;
                 default:
                     Console.WriteLine("Unrecognized command. Use /h for a command list");
